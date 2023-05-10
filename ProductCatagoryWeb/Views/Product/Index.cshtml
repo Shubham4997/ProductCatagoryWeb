@@ -1,0 +1,27 @@
+﻿@model List<ProductCatagoryWeb.ViewModels.ProductList>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<table class="table" style="margin:20px">
+    <thead>
+        <tr>
+            <th scope="col">Product Id</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Category Id</th>
+            <th scope="col">Category Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+         {
+            <tr>
+                <td>@item.ProductId</td>
+                <td>@item.ProductName</td>
+                <td>@item.CategoryId</td>
+                <td>@item.CategoryName</td>
+            </tr>
+         }
+    </tbody>
+</table>

@@ -1,0 +1,138 @@
+﻿@model List<ProductCatagoryWeb.ViewModels.CategoryVM>
+
+@{
+    ViewBag.Title = "ManageCategory";
+}
+
+
+<button class="btn btn-success" data-toggle="modal" data-target="#myModal" style="margin:10px;">Add Category</button>
+<table class="table" style="margin:20px">
+    <thead>
+        <tr>
+            <th scope="col">Category Id</th>
+            <th scope="col">Category Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.CategoryId</td>
+                <td>@item.CategoryName</td>
+                <td>
+                    <button class="btn btn-primary" onclick="getbyID(@item.CategoryId)">Edit</button>
+                    <button class="btn btn-danger" onclick="Deletecat(@item.CategoryId)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Add Category</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="State">Category Name</label>
+                        <input type="text" class="form-control" id="Category" placeholder="Category Name" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Add</button>
+                <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="Update();">Update</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<input hidden id="HiddenId" />
+
+@section scripts{
+    <script>
+        $(function () {
+
+        })
+
+        function Add() {
+            debugger;
+            $.ajax({
+                url:'@Url.Action("AddCategory", "Product")',
+                data: { CategoryName: $("#Category").val()},
+                type: "POST",
+                //contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                   // loadData();
+                    location.reload();
+                    $('#myModal').modal('hide');
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+        function getbyID(Id) {
+            $.ajax({
+                url:'@Url.Action("getbyID", "Product")',
+                data: { Id:Id},
+                type: "GET",
+                //contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                success: function (result) {
+                    debugger;
+                    $('#Category').val(result.CategoryName);
+                    $("#HiddenId").val(result.CategoryId)
+                    $('#myModal').modal('show');
+                    $('#btnUpdate').show();
+                    $('#btnAdd').hide();
+                },
+                error: function (errormessage) {
+                    debugger;
+                    alert(errormessage.responseText);
+                }
+            });
+            return false;
+        }
+
+        function Update() {
+            $.ajax({
+                url:'@Url.Action("UpdateCategory", "Product")',
+                data: { CategoryName: $("#Category").val(), CategoryId: $("#HiddenId").val() },
+                type: "POST",
+                dataType: "json",
+                success: function (result) {
+                    $('#myModal').modal('hide');
+                    $('#EmployeeID').val("");
+                    $("#HiddenId").val("");
+                    location.reload();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+        function Deletecat(ID) {
+                $.ajax({
+                    url:'@Url.Action("DeleteCategory", "Product")',
+                    data: { Id: ID },
+                    type: "POST",
+                   // contentType: "application/json;charset=UTF-8",
+                    dataType: "json",
+                    success: function (result) {
+                        location.reload();
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+        }
+    </script>
+}
+
