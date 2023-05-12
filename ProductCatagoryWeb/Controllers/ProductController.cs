@@ -1,4 +1,4 @@
-﻿using ProductCatagoryWeb.Models;
+using ProductCatagoryWeb.Models;
 using ProductCatagoryWeb.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -13,59 +13,82 @@ namespace ProductCatagoryWeb.Controllers
         // GET: Product
         public ActionResult Index()
         {
-            ProductContext db = new ProductContext();
-            List<ProductList> list = new List<ProductList>();
-            var td = (from s in db.products
-                      join r in db.category on s.CategoryId equals r.CategoryId
-                      select new
-                      {
-                          s.ProductId,
-                          s.ProductName,
-                          r.CategoryId,
-                          r.CategoryName,
-                      }).ToList();
-
-            foreach (var item in td)
+            try
             {
-                list.Add(new ProductList()
+                ProductContext db = new ProductContext();
+                List<ProductList> list = new List<ProductList>();
+                var td = (from s in db.products
+                          join r in db.category on s.CategoryId equals r.CategoryId
+                          select new
+                          {
+                              s.ProductId,
+                              s.ProductName,
+                              r.CategoryId,
+                              r.CategoryName,
+                          }).ToList();
+
+                foreach (var item in td)
                 {
-                    ProductId = item.ProductId,
-                    ProductName = item.ProductName,
-                    CategoryId = item.CategoryId,
-                    CategoryName = item.CategoryName,
-                });
+                    list.Add(new ProductList()
+                    {
+                        ProductId = item.ProductId,
+                        ProductName = item.ProductName,
+                        CategoryId = item.CategoryId,
+                        CategoryName = item.CategoryName,
+                    });
+                }
+                return View(list);
             }
-            return View(list);
+            catch (Exception)
+            {
+                return View(new List<ProductList>());
+            }
+            
         }
 
         public ActionResult ManageCategory()
         {
-            ProductContext db = new ProductContext();
-            List<CategoryVM> list = db.category.Select(x => new CategoryVM()
+            try
             {
-                CategoryName = x.CategoryName,
-                CategoryId = x.CategoryId
-            }).ToList();
-            return View(list);
+                ProductContext db = new ProductContext();
+                List<CategoryVM> list = db.category.Select(x => new CategoryVM()
+                {
+                    CategoryName = x.CategoryName,
+                    CategoryId = x.CategoryId
+                }).ToList();
+                return View(list);
+            }
+            catch (Exception)
+            {
+                return View(new List<CategoryVM>());
+            }
+           
         }
 
         public ActionResult ManageProduct()
         {
-            ProductContext db = new ProductContext();
-            List<ProductVM> list = db.products.Select(x => new ProductVM()
+            try
             {
-                ProductId = x.ProductId,
-                ProductName = x.ProductName,
-                CategoryId = x.CategoryId
-            }).ToList();
-            return View(list);
+                ProductContext db = new ProductContext();
+                List<ProductVM> list = db.products.Select(x => new ProductVM()
+                {
+                    ProductId = x.ProductId,
+                    ProductName = x.ProductName,
+                    CategoryId = x.CategoryId
+                }).ToList();
+                return View(list);
+            }
+            catch (Exception)
+            {
+                return View(new List<ProductVM>());
+            }
+           
         }
 
         [HttpPost]
         public ActionResult AddCategory(string CategoryName)
         {
             ProductContext db = new ProductContext();
-
             Category c = new Category()
             {
                 //CategoryId = 1,
